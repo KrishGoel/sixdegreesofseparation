@@ -1,4 +1,7 @@
 import json
+import pandas as pd
+from math import inf
+
 with open('./data/users.json', 'r') as f: # Opening the file in 'r' (reading) mode
 	users = json.load(f)
 
@@ -7,12 +10,7 @@ for i in range(len(users)):
 	for j in range(len(users)):
 		if j in users[i]["connections"]:
 			connections[i][j] = 1
-
-for i in connections:
-	print(i)
 # Connections is the adjacency matrix with all weights = 1 (may be updated later to indicate the strength of the bond)
-
-from math import inf
 
 def find_all_distances(connections, start, end=-1):
     n = len(connections)
@@ -59,5 +57,42 @@ def find_shortest_path(connections, start, end=-1):
 def find_shortest_distance(connections, start, end=-1):
     return find_all_distances(connections, start, end)[0]
 
-print(find_shortest_path(connections, 0, 9))
-print(find_shortest_distance(connections, 0, 9))
+# Runner
+print("""
+Welcome to 6ix Degrees Of Separation
+""")
+while True:
+    print("""
+    ------ MENU ------
+    1. Enlist all the users in the database
+    2. Get the distance and path between 2 people
+    3. Exit
+    """)
+
+    choice = int(input("Enter your choice: "))
+
+    if choice == 1:
+        print(pd.DataFrame(users))
+    elif choice == 2:
+        source = int(input("Enter the UID of the 1st user: "))
+        destination = int(input("Enter the UID of the 2nd user: "))
+
+        if find_shortest_path(connections, source, destination) == inf:
+            print("No social connection exists")
+        else:
+            print("The shortest path between", users[source]["name"], "and", users[destination]["name"], "is", find_shortest_distance(connections, source, destination), "social units")
+            print("""
+            The path is """, end="")
+            for i in find_shortest_path(connections, source, destination):
+                if i == find_shortest_path(connections, source, destination)[-1]:
+                    print(users[i]["name"])
+                else:
+                    print(users[i]["name"], end = " -> ")
+
+    elif choice == 3:
+        break
+    else:
+        print("Enter a valid input from the menu")
+    
+    else: 
+        print("Invalid input")
