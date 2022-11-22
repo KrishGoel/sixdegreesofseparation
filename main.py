@@ -93,6 +93,3 @@ while True:
         break
     else:
         print("Enter a valid input from the menu")
-    
-    else: 
-        print("Invalid input")
